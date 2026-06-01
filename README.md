@@ -13,8 +13,32 @@ re-structuring anything.
 
 ---
 
+## Checklist
+
+**Done**
+- [x] Identify the three datasets (NAO, ENSO, sunspots) and locate authoritative sources
+- [x] `fetch_data.py` — download all 8 raw sources reproducibly
+- [x] `build_panel.py` — parse + align into `panel_monthly.csv` (1749→) and `panel_yearly.csv` (1700→)
+- [x] Pull both windows: full/long record **and** clean `clean_1950plus` (1950→) flag
+- [x] Empty `target` slot + `merge_target()` helper for a future predictand
+- [x] `correlate.R` — correlation matrix (full + 1950+) and lead/lag CCF plots
+- [x] `model.R` — time-ordered `target ~ lagged drivers` scaffold (no-op until target set)
+- [x] Sanity checks pass (NAO↔NAO r≈0.69, ENSO↔ENSO r≈0.97, 1997–98 El Niño ONI +2.4)
+- [x] Docs (`docs/`) + a README in every subfolder
+- [x] Pipeline verified end-to-end from a clean checkout
+
+**Pending — needs the target variable from Amelia**
+- [ ] Receive Amelia's data and confirm its resolution (monthly vs yearly)
+- [ ] `merge_target()` it into the panel(s)
+- [ ] Choose modeling window (`clean_1950plus` vs full) and NAO/ENSO variant
+- [ ] Run `R/model.R`; benchmark vs persistence/climatology
+- [ ] Address seasonality + autocorrelation before claiming significance (see [`docs/methodology.md`](docs/methodology.md))
+
+---
+
 ## Table of contents
 
+- [Checklist](#checklist)
 - [Why this exists](#why-this-exists)
 - [Quick start](#quick-start)
 - [Data sources](#data-sources)
