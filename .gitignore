@@ -1,0 +1,23 @@
+# Raw & processed data are NOT committed:
+#  - SILSO sunspot data is CC BY-NC (redistribution should carry attribution)
+#  - files are large (daily sunspots ~3 MB) and fully regenerable
+# Provenance lives in data/raw/MANIFEST.md (tracked); run src/fetch_data.py to rebuild.
+data/raw/*
+!data/raw/MANIFEST.md
+data/processed/*
+!data/processed/.gitkeep
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# R
+.Rhistory
+.RData
+.Rproj.user/
+
+# OS / editor
+.DS_Store
+Thumbs.db
