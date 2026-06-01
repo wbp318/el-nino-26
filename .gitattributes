@@ -1,0 +1,101 @@
+# =============================================================================
+# GitHub Linguist overrides — make EVERY recognized file count toward the
+# repository language statistics, including types Linguist hides by default
+# (prose like Markdown/Text, data formats, documentation, vendored, generated).
+#
+# Linguist docs: https://github.com/github-linguist/linguist/blob/master/docs/overrides.md
+# =============================================================================
+
+# --- Global catch-all: detect & count everything Linguist can identify --------
+# `linguist-detectable` flips on the normally-off categories (prose, data, …).
+# The three `=false` lines stop Linguist auto-excluding files it guesses are
+# documentation / third-party / machine-generated.
+*                 linguist-detectable=true
+*                 linguist-documentation=false
+*                 linguist-vendored=false
+*                 linguist-generated=false
+
+# --- Prose types (OFF by default) — force them into the language bar ----------
+*.md              linguist-detectable=true
+*.markdown        linguist-detectable=true
+*.mdx             linguist-detectable=true
+*.txt             linguist-detectable=true linguist-language=Text
+*.text            linguist-detectable=true linguist-language=Text
+*.rst             linguist-detectable=true
+*.adoc            linguist-detectable=true
+*.asciidoc        linguist-detectable=true
+*.org             linguist-detectable=true
+*.tex             linguist-detectable=true
+*.rtf             linguist-detectable=true linguist-language=Text
+LICENSE           linguist-detectable=true linguist-language=Text
+README            linguist-detectable=true linguist-language=Text
+
+# --- Data / config types (OFF by default) -------------------------------------
+*.json            linguist-detectable=true
+*.jsonl           linguist-detectable=true
+*.geojson         linguist-detectable=true
+*.json5           linguist-detectable=true
+*.yaml            linguist-detectable=true
+*.yml             linguist-detectable=true
+*.toml            linguist-detectable=true
+*.ini             linguist-detectable=true
+*.cfg             linguist-detectable=true
+*.csv             linguist-detectable=true
+*.tsv             linguist-detectable=true
+*.xml             linguist-detectable=true
+*.svg             linguist-detectable=true
+*.proto           linguist-detectable=true
+*.sql             linguist-detectable=true
+*.graphql         linguist-detectable=true
+
+# --- Languages that ARE detectable by default — listed for completeness -------
+# (these already count; explicit lines keep the picture exhaustive)
+*.py              linguist-language=Python      linguist-detectable=true
+*.pyi             linguist-language=Python      linguist-detectable=true
+*.ipynb           linguist-language=Jupyter\ Notebook linguist-detectable=true
+*.r               linguist-language=R           linguist-detectable=true
+*.R               linguist-language=R           linguist-detectable=true
+*.rmd             linguist-language=RMarkdown   linguist-detectable=true
+*.Rmd             linguist-language=RMarkdown   linguist-detectable=true
+*.js              linguist-language=JavaScript  linguist-detectable=true
+*.mjs             linguist-language=JavaScript  linguist-detectable=true
+*.cjs             linguist-language=JavaScript  linguist-detectable=true
+*.jsx             linguist-language=JavaScript  linguist-detectable=true
+*.ts              linguist-language=TypeScript  linguist-detectable=true
+*.tsx             linguist-language=TypeScript  linguist-detectable=true
+*.c               linguist-language=C           linguist-detectable=true
+*.h               linguist-language=C           linguist-detectable=true
+*.cpp             linguist-language=C++         linguist-detectable=true
+*.cc              linguist-language=C++         linguist-detectable=true
+*.hpp             linguist-language=C++         linguist-detectable=true
+*.cs              linguist-language=C#          linguist-detectable=true
+*.java            linguist-language=Java        linguist-detectable=true
+*.kt              linguist-language=Kotlin      linguist-detectable=true
+*.kts             linguist-language=Kotlin      linguist-detectable=true
+*.swift           linguist-language=Swift       linguist-detectable=true
+*.go              linguist-language=Go          linguist-detectable=true
+*.rs              linguist-language=Rust         linguist-detectable=true
+*.rb              linguist-language=Ruby        linguist-detectable=true
+*.php             linguist-language=PHP         linguist-detectable=true
+*.pl              linguist-language=Perl        linguist-detectable=true
+*.scala           linguist-language=Scala       linguist-detectable=true
+*.jl              linguist-language=Julia       linguist-detectable=true
+*.lua             linguist-language=Lua         linguist-detectable=true
+*.dart            linguist-language=Dart        linguist-detectable=true
+*.hs              linguist-language=Haskell     linguist-detectable=true
+*.ex              linguist-language=Elixir      linguist-detectable=true
+*.exs             linguist-language=Elixir      linguist-detectable=true
+*.erl             linguist-language=Erlang      linguist-detectable=true
+*.clj             linguist-language=Clojure     linguist-detectable=true
+*.m               linguist-language=MATLAB      linguist-detectable=true
+*.sh              linguist-language=Shell       linguist-detectable=true
+*.bash            linguist-language=Shell       linguist-detectable=true
+*.zsh             linguist-language=Shell       linguist-detectable=true
+*.ps1             linguist-language=PowerShell  linguist-detectable=true
+*.psm1            linguist-language=PowerShell  linguist-detectable=true
+*.bat             linguist-language=Batchfile   linguist-detectable=true
+*.html            linguist-language=HTML        linguist-detectable=true
+*.css             linguist-language=CSS         linguist-detectable=true
+*.scss            linguist-language=SCSS        linguist-detectable=true
+Dockerfile        linguist-language=Dockerfile  linguist-detectable=true
+Makefile          linguist-language=Makefile    linguist-detectable=true
