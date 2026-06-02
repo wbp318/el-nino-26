@@ -26,6 +26,11 @@ diagnostics, and the forecast-validation harness.
 - A CI status badge and a *Testing & CI* section in the README; `tests/` and
   `.github/workflows/` added to the repository-layout tree.
 
+### Changed
+- Pinned CI actions to the Node 24 majors — `actions/checkout@v6` and
+  `actions/setup-python@v6` (both declare `runs.using: node24`), ahead of GitHub forcing
+  Node 24 on 2026-06-16 and removing the Node 20 runtime on 2026-09-16.
+
 ## [0.1.0] — 2026-06-02
 
 First tagged release. The predictor pipeline (NAO / ENSO / sunspots) and the
