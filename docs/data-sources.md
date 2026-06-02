@@ -82,13 +82,20 @@ declare El Niño / La Niña. **Format:** `SEAS YR TOTAL ANOM`, where `SEAS` is a
 3-month label (`DJF`,`JFM`,…,`NDJ`). The parser maps each label to its **center
 month** (`DJF`→Jan … `NDJ`→Dec) and keeps `ANOM`.
 
-### 3b. CPC ERSSTv5 Niño-region SSTs  *(raw SSTs incl. Niño3.4)*
+### 3b. CPC ERSSTv5 Niño-region SSTs  *(raw SSTs incl. Niño3.4, 1991-2020 base)*
 | File | Range | URL |
 |---|---|---|
 | `nino34_cpc_ersst5.ascii` | 1950→ | https://www.cpc.ncep.noaa.gov/data/indices/ersst5.nino.mth.91-20.ascii |
 
-Monthly SST + anomaly for Niño 1+2, 3, 4, and 3.4. Pulled for completeness/QC;
-the panels currently use ONI (3a) and the long Niño3.4 (3c).
+Monthly SST + anomaly for Niño 1+2, 3, 4, and 3.4. **Format:** whitespace columns
+`YR MON NINO1+2 ANOM NINO3 ANOM NINO4 ANOM NINO3.4 ANOM` (the `ANOM` header repeats, so
+parse the Niño3.4 anomaly by position — the last column). The anomalies use a **fixed
+1991-2020** base period (hence `91-20` in the filename).
+
+Promoted to the panel column **`enso_nino34_9120`** by `parse_nino34_ersst5()`. Its
+fixed 1991-2020 base is the reason it — not `enso_oni` (sliding base) or `enso_nino34`
+(1981-2010 base) — is the apples-to-apples truth series for forecast verification
+against the IRI/CPC plume. See [`validation.md`](validation.md).
 
 ### 3c. NOAA PSL long Niño3.4 anomaly  *(long arm)*
 | File | Range | URL |
@@ -112,8 +119,10 @@ relative to the **1981–2010** base period.
 | `nao_station` | 2b | 1865→ |
 | `enso_oni` | 3a | 1950→ |
 | `enso_nino34` | 3c | 1870→ |
+| `enso_nino34_9120` | 3b | 1950→ |
 | `ssn_monthly` | 1 (monthly) | 1749→ |
 | `ssn_yearly` (yearly panel) | 1 (yearly) | 1700→ |
 
-`nino34_cpc_ersst5.ascii` (3b) is fetched and archived but not yet promoted to a
-panel column — it is a QC cross-check against the long series over 1950→.
+`enso_nino34_9120` (from 3b, fixed 1991-2020 base) doubles as a QC cross-check against
+the long series over 1950→ **and** as the base-matched truth series for forecast
+verification — see [`validation.md`](validation.md).

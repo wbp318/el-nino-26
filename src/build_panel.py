@@ -101,6 +101,24 @@ def parse_nino34_long() -> pd.Series:
     return s
 
 
+def parse_nino34_ersst5() -> pd.Series:
+    """CPC ERSSTv5 monthly Niño3.4 anomaly on the FIXED 1991-2020 base period.
+
+    This is the base-period match to the IRI/CPC ENSO prediction plume (which uses
+    1991-2020); `enso_oni` (sliding 30-yr base) and `enso_nino34` (1981-2010 base)
+    are NOT, so this is the column to use for forecast verification — see
+    docs/validation.md and src/verify_forecast.py.
+
+    File cols: `YR MON NINO1+2 ANOM NINO3 ANOM NINO4 ANOM NINO3.4 ANOM`. The header
+    repeats `ANOM` four times, so the Niño3.4 anomaly is selected by position (the
+    last column), not by name.
+    """
+    df = pd.read_csv(RAW / "nino34_cpc_ersst5.ascii", sep=r"\s+", header=0)
+    idx = [_month_start(y, m) for y, m in zip(df.iloc[:, 0], df.iloc[:, 1])]
+    return pd.Series(df.iloc[:, -1].values, index=pd.DatetimeIndex(idx),
+                     name="enso_nino34_9120")
+
+
 def merge_target(panel: pd.DataFrame, target: pd.Series) -> pd.DataFrame:
     """Drop a predictand into the `target` column by aligning on the index.
 
@@ -114,7 +132,7 @@ def merge_target(panel: pd.DataFrame, target: pd.Series) -> pd.DataFrame:
 
 def build_monthly() -> pd.DataFrame:
     cols = [parse_nao_cpc(), parse_nao_station(), parse_oni(),
-            parse_nino34_long(), parse_ssn_monthly()]
+            parse_nino34_long(), parse_nino34_ersst5(), parse_ssn_monthly()]
     df = pd.concat(cols, axis=1).sort_index()
     df.index.name = "date"
     df["clean_1950plus"] = df.index.year >= 1950

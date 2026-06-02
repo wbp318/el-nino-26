@@ -9,10 +9,12 @@ overview and quick start; these documents go into detail.
 | [`methodology.md`](methodology.md) | How the series are aligned, choice of resolution, the long-vs-1950 windows, reconstruction confidence caveats, and how correlation / cross-correlation are computed. |
 | [`pipeline.md`](pipeline.md) | Stage-by-stage walkthrough of `fetch_data.py` → `build_panel.py` → R scripts, how to refresh data, and how to extend the pipeline with a new source. |
 | [`modeling.md`](modeling.md) | How to set the target variable, the `merge_target()` helper, `fit_model()` usage, lagged-predictor design, the time-ordered train/test split, and suggested next steps. |
+| [`validation.md`](validation.md) | Validating a published ENSO **forecast** against observations — the worked COLA CCSM4 (May 2026 plume) case: base-period/dataset traps, what's verifiable in 4 months, the metrics, and the dated runbook. |
 | [`glossary.md`](glossary.md) | Definitions of every domain term and acronym used in the repo. |
 
 ## Reading order
 
 New to the project? Read the root README, then `glossary.md`, then `data-sources.md`,
 then `methodology.md`. If you are about to model, read `modeling.md`. If you are
+scoring a published forecast against observations, read `validation.md`. If you are
 maintaining or extending the code, read `pipeline.md`.
