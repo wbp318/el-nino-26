@@ -8,7 +8,7 @@ Versions remain `0.x` until a predictive **target** is plugged in and a modeling
 is claimed; until then the public surface is the predictor pipeline, the correlation
 diagnostics, and the forecast-validation harness.
 
-## [Unreleased]
+## [0.1.1] — 2026-06-02
 
 ### Added
 - **Continuous integration** (`.github/workflows/ci.yml`) — runs on every push and pull
@@ -27,9 +27,20 @@ diagnostics, and the forecast-validation harness.
   `.github/workflows/` added to the repository-layout tree.
 
 ### Changed
-- Pinned CI actions to the Node 24 majors — `actions/checkout@v6` and
-  `actions/setup-python@v6` (both declare `runs.using: node24`), ahead of GitHub forcing
-  Node 24 on 2026-06-16 and removing the Node 20 runtime on 2026-09-16.
+- Bumped CI actions to the Node 24 majors — `actions/checkout` v6.0.3 and
+  `actions/setup-python` v6.2.0 (both declare `runs.using: node24`), ahead of GitHub
+  forcing Node 24 on 2026-06-16 and removing the Node 20 runtime on 2026-09-16.
+
+### Security
+- **Pinned CI actions to full commit SHAs** (`actions/checkout@df4cb1c…` = v6.0.3,
+  `actions/setup-python@a309ff8…` = v6.2.0) as supply-chain hardening: a mutable tag can
+  be moved or compromised (the class behind the March 2025 `tj-actions/changed-files`
+  incident), a pinned SHA cannot. The workflow already runs with `permissions: contents:
+  read`, references no secrets, and uses `pull_request` (not `pull_request_target`).
+- `el-nino-26` does **not** use `anthropics/claude-code-action`, so the recent Claude Code
+  Action advisories (`CVE-2026-47751`, and the `checkWritePermissions` `[bot]`
+  actor-trust bypass fixed in 1.0.94) do not apply here — verified by scanning every repo
+  on the account for the action.
 
 ## [0.1.0] — 2026-06-02
 
@@ -116,4 +127,5 @@ observed Niño 3.4 SST anomalies.
   model run) are observable, and only the *rise* — the OND peak and decline need the
   Jan–Apr 2027 re-runs.
 
+[0.1.1]: https://github.com/wbp318/el-nino-26/releases/tag/v0.1.1
 [0.1.0]: https://github.com/wbp318/el-nino-26/releases/tag/v0.1.0
