@@ -1,0 +1,54 @@
+name: CI
+
+# Run on every push and every pull request.
+on:
+  push:
+  pull_request:
+
+# Read-only token is all CI needs.
+permissions:
+  contents: read
+
+# A newer push to the same ref cancels the older in-flight run.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: Lint (ruff)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install ruff
+      # E9 = syntax errors, F = pyflakes (undefined names, unused imports).
+      # Real-error gate only — not a style police that would churn on every push.
+      - name: ruff check
+        run: ruff check --select E9,F src tests
+
+  test:
+    name: Tests (py${{ matrix.python }} / ${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python: ["3.10", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+          cache: pip
+          cache-dependency-path: |
+            requirements.txt
+            requirements-dev.txt
+      - name: Install dependencies
+        run: pip install -r requirements.txt -r requirements-dev.txt
+      - name: Run tests
+        # Hermetic: the suite fixtures every parser and drives the verifier with
+        # synthetic data, so CI never hits the NOAA/SILSO servers.
+        run: pytest -q

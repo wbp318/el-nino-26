@@ -1,0 +1,4 @@
+# Dev / CI-only dependencies (the runtime deps are in requirements.txt).
+#   pip install -r requirements.txt -r requirements-dev.txt
+pytest>=8.0
+ruff>=0.6

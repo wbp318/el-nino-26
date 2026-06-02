@@ -1,5 +1,7 @@
 # el-nino-26
 
+[![CI](https://github.com/wbp318/el-nino-26/actions/workflows/ci.yml/badge.svg)](https://github.com/wbp318/el-nino-26/actions/workflows/ci.yml)
+
 A reproducible pipeline that assembles three climate-driver time series —
 **North Atlantic Oscillation (NAO)**, **El Niño–Southern Oscillation (ENSO)**, and
 **sunspot number** — into aligned monthly and yearly panels, then explores how they
@@ -59,6 +61,7 @@ re-structuring anything.
 - [Forecast validation](#forecast-validation)
 - [Repository layout](#repository-layout)
 - [Reproducing from scratch](#reproducing-from-scratch)
+- [Testing & CI](#testing--ci)
 - [Licensing & attribution](#licensing--attribution)
 - [Further documentation](#further-documentation)
 
@@ -217,12 +220,16 @@ ERSSTv5 — up to ~0.5 °C apart in events), and the dated runbook are in
 ```
 el-nino-26/
 ├── README.md              ← this file
-├── requirements.txt
+├── CHANGELOG.md           ← release history / per-version notes
+├── requirements.txt       ← runtime deps (pandas, requests)
+├── requirements-dev.txt   ← dev/CI deps (pytest, ruff)
 ├── .gitattributes         ← GitHub Linguist: count every language incl. prose
 ├── .gitignore             ← raw/processed data + results are regenerable, untracked
+├── .github/workflows/     ← CI: lint + tests on every push (ci.yml)
 ├── docs/                  ← deep documentation (see docs/README.md)
 ├── src/                   ← Python pipeline (fetch_data.py, build_panel.py, verify_forecast.py)
 ├── R/                     ← stats / modeling (correlate.R, model.R)
+├── tests/                 ← hermetic unit tests (see tests/README.md)
 ├── data/
 │   ├── raw/               ← downloaded sources (gitignored) + MANIFEST.md
 │   ├── forecasts/         ← committed: digitized forecast lines for validation
@@ -240,6 +247,24 @@ analysis depends on data that isn't regenerable by `fetch_data.py` (the only com
 non-regenerable inputs are the digitized forecast CSVs in `data/forecasts/`). The build
 is deterministic given the upstream sources (which update monthly as new observations
 are published).
+
+## Testing & CI
+
+[GitHub Actions](.github/workflows/ci.yml) runs **on every push and pull request**: a
+`ruff` lint gate (syntax + undefined-name errors) and the `pytest` suite across
+**Linux + Windows** on **Python 3.10 and 3.12**.
+
+```bash
+pip install -r requirements.txt -r requirements-dev.txt
+pytest -q                              # hermetic unit tests (no network)
+ruff check --select E9,F src tests     # the same lint gate CI runs
+```
+
+The tests are **hermetic** — every parser is fed a small fixture file and the verifier
+is driven by a synthetic panel + forecast CSV, so the suite never touches the
+NOAA / SILSO servers and is fully deterministic. Integration against the live sources is
+deliberately excluded from CI (those endpoints are flaky and refresh monthly); run
+`python src/fetch_data.py` locally for that. Coverage details: [`tests/README.md`](tests/README.md).
 
 ## Licensing & attribution
 

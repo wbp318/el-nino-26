@@ -8,6 +8,24 @@ Versions remain `0.x` until a predictive **target** is plugged in and a modeling
 is claimed; until then the public surface is the predictor pipeline, the correlation
 diagnostics, and the forecast-validation harness.
 
+## [Unreleased]
+
+### Added
+- **Continuous integration** (`.github/workflows/ci.yml`) — runs on every push and pull
+  request: a `ruff` lint gate (`E9` syntax + `F` pyflakes) and the `pytest` suite across
+  a matrix of **Linux + Windows** on **Python 3.10 and 3.12**, with pip caching and
+  per-ref concurrency cancellation.
+- **Hermetic test suite** (`tests/`) — fixtures every parser and drives the verifier with
+  a synthetic panel + forecast CSV, so CI never hits the NOAA / SILSO servers. Covers
+  `parse_nino34_ersst5` (last-column selection; April 2026 = +0.23), `parse_oni`
+  (season→center-month), `parse_nino34_long` (`-99.99` masking, metadata stop),
+  `merge_target` (index-aligned, non-mutating), `observed_seasonal` (centered 3-month
+  mean), the verifier's base-period guard, `build_table` per-lead error, and correlation
+  suppression. `tests/conftest.py` puts `src/` on the path; `tests/README.md` documents it.
+- **`requirements-dev.txt`** — dev/CI dependencies (`pytest`, `ruff`).
+- A CI status badge and a *Testing & CI* section in the README; `tests/` and
+  `.github/workflows/` added to the repository-layout tree.
+
 ## [0.1.0] — 2026-06-02
 
 First tagged release. The predictor pipeline (NAO / ENSO / sunspots) and the
