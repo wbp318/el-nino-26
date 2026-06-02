@@ -8,6 +8,13 @@ Versions remain `0.x` until a predictive **target** is plugged in and a modeling
 is claimed; until then the public surface is the predictor pipeline, the correlation
 diagnostics, and the forecast-validation harness.
 
+## [Unreleased]
+
+### Added
+- **Dependabot** (`.github/dependabot.yml`) for the `github-actions` ecosystem — weekly,
+  grouped into one PR. It bumps SHA-pinned actions and keeps the commit SHA and the
+  trailing version comment in sync, so the pins stay current without manual SHA lookups.
+
 ## [0.1.1] — 2026-06-02
 
 ### Added
