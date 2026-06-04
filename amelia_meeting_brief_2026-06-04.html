@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Meeting brief — Amelia Fox, 2026-06-04</title>
+<style>
+  :root {
+    --ink: #1a1f26; --muted: #5b6672; --line: #e2e6ea; --bg: #ffffff;
+    --accent: #0b5cad; --warm: #b5341f; --cool: #0b6e4f; --chip: #f1f5f9;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font: 16px/1.55 -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: var(--ink); background: #f6f7f9; margin: 0; padding: 2rem 1rem;
+  }
+  main {
+    max-width: 880px; margin: 0 auto; background: var(--bg);
+    padding: 2.5rem 3rem 3rem; border: 1px solid var(--line); border-radius: 10px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.05);
+  }
+  h1 { font-size: 1.7rem; margin: 0 0 .25rem; line-height: 1.2; }
+  .sub { color: var(--muted); margin: 0 0 1.5rem; }
+  .sub code { background: var(--chip); padding: .1em .4em; border-radius: 4px; font-size: .9em; }
+  hr { border: none; border-top: 2px solid var(--line); margin: 1.5rem 0; }
+  h2 {
+    font-size: 1.2rem; margin: 2rem 0 .75rem; padding-bottom: .3rem;
+    border-bottom: 1px solid var(--line); color: var(--accent);
+  }
+  h3 { font-size: 1rem; margin: 1.25rem 0 .5rem; }
+  table { border-collapse: collapse; width: 100%; margin: .75rem 0 1rem; font-size: .93rem; }
+  th, td { border: 1px solid var(--line); padding: .45rem .6rem; text-align: left; vertical-align: top; }
+  th { background: var(--chip); font-weight: 600; }
+  tbody tr:nth-child(even) { background: #fafbfc; }
+  code { font-family: "SF Mono", Consolas, "Liberation Mono", monospace; font-size: .88em; }
+  td code, li code, p code { background: var(--chip); padding: .08em .35em; border-radius: 4px; }
+  ol, ul { padding-left: 1.4rem; }
+  li { margin: .35rem 0; }
+  .pos { color: var(--cool); font-weight: 600; }
+  .neg { color: var(--warm); font-weight: 600; }
+  .flag { background: #fff8ec; border-left: 4px solid #e0a93b; padding: .8rem 1rem; border-radius: 0 6px 6px 0; margin: 1rem 0; }
+  .takeaway { background: #eef5fc; border-left: 4px solid var(--accent); padding: .8rem 1rem; border-radius: 0 6px 6px 0; margin: 1rem 0; }
+  a { color: var(--accent); }
+  .meta-foot { color: var(--muted); font-size: .85rem; margin-top: 2.5rem; border-top: 1px solid var(--line); padding-top: 1rem; }
+  @media print { body { background: #fff; padding: 0; } main { border: none; box-shadow: none; max-width: 100%; } }
+</style>
+</head>
+<body>
+<main>
+  <h1>Meeting brief — Amelia Fox</h1>
+  <p class="sub">2026-06-04 @ 2:00pm CT · Re: <code>DataforElnino.xlsx</code> (cleaned ENSO / NAO / sunspot data for the el-niño-26 correlation model)</p>
+  <hr>
+
+  <h2>1. What she delivered (data inventory)</h2>
+  <table>
+    <thead><tr><th>Sheet</th><th>Variable</th><th>Cadence</th><th>Range</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td><strong>ENSO</strong></td><td>ONI (Niño 3.4 anomaly)</td><td>Monthly, 12 overlapping 3-mo seasons</td><td>1950 – 2026 (DJF only for 2026)</td><td>Cols A–M are the raw ONI; cols O–V are her <strong>pre-aggregated</strong> JFM/AMJ/JAS/OND seasonal means + an annual average. Clean.</td></tr>
+      <tr><td><strong>NAO</strong></td><td>NAOI</td><td>Monthly</td><td>Jan 1950 – <strong>Apr 2026</strong></td><td>One value/month, tidy date column. Most up-to-date series.</td></tr>
+      <tr><td><strong>Sunspots</strong></td><td>Sunspot number</td><td>Monthly</td><td>1950 – <strong>2025</strong></td><td>Source: UMass Lowell (<code>ulcar.uml.edu</code>). Ends Dec 2025.</td></tr>
+      <tr><td><strong>credits</strong></td><td>sources</td><td>—</td><td>—</td><td>Sunspots + NAO links present. <strong>ENSO, Weather, USDA Crops rows are blank</strong> — no source URL.</td></tr>
+    </tbody>
+  </table>
+
+  <h2>2. Three things to flag on the call (data quality)</h2>
+  <ol>
+    <li><strong>Series end on different dates.</strong> NAO runs to Apr 2026, sunspots only to Dec 2025, ENSO 2026 is DJF only. Any merged model is currently capped at <strong>2025</strong> for a complete row. → Ask: can she keep sunspots current, or settle on a fixed cutoff?</li>
+    <li><strong>Missing source citations.</strong> The <code>credits</code> sheet has no URL for <strong>ENSO</strong>, and the <em>Weather</em> and <em>USDA Crops</em> rows are placeholders.
+      <div class="flag">ENSO ONI source is confirmed (matches NOAA CPC ONI v5 to the decimal): <a href="https://www.cpc.ncep.noaa.gov/data/indices/oni.ascii.txt"><code>https://www.cpc.ncep.noaa.gov/data/indices/oni.ascii.txt</code></a> — give her that for the blank credit row. Ask whether <em>Weather</em> and <em>USDA Crops</em> are still coming.</div>
+    </li>
+    <li><strong>Pre-aggregated ENSO columns.</strong> She's already computed seasonal + annual ENSO means (cols O–V). Confirm we standardize on <em>her</em> aggregation so our numbers match hers — spot-checked one (1950 JFM = -1.333) and it ties out.</li>
+  </ol>
+
+  <h2>3. The analytical headline <span style="font-weight:400;color:var(--muted);font-size:.85rem">(run on her data, 1950–2025, n=76)</span></h2>
+  <p>Reproducible via <code>python src/seasonal_diagnostics.py --xlsx DataforElnino.xlsx</code> → <code>results/seasonal_lag_correlation.csv</code>.</p>
+
+  <h3>3a. Raw annual linear correlations with ONI are weak — the key modeling conversation.</h3>
+  <table>
+    <thead><tr><th>Predictor</th><th>Contemporaneous r vs ONI</th><th>Best lagged r</th></tr></thead>
+    <tbody>
+      <tr><td>Sunspots</td><td>+0.12</td><td><strong class="pos">+0.25–0.26</strong> (leads ONI by 1–2 yr)</td></tr>
+      <tr><td>NAO (annual)</td><td>+0.04</td><td>nothing stable</td></tr>
+      <tr><td>NAO (DJF winter)</td><td><span class="neg">−0.02</span></td><td>nothing stable</td></tr>
+    </tbody>
+  </table>
+
+  <h3>3b. Seasonal matrix — predictor season (year Y) vs ENSO OND (peak season, year Y)</h3>
+  <table>
+    <thead><tr><th>Predictor season</th><th>Sunspot → OND</th><th>NAO → OND</th></tr></thead>
+    <tbody>
+      <tr><td>JFM</td><td>+0.14</td><td>+0.05</td></tr>
+      <tr><td>AMJ</td><td>+0.13</td><td>+0.15</td></tr>
+      <tr><td>JAS</td><td>+0.09</td><td><span class="neg">−0.05</span></td></tr>
+      <tr><td>OND</td><td>+0.07</td><td><strong class="pos">+0.16</strong></td></tr>
+    </tbody>
+  </table>
+  <p>Best sunspot signal is <strong>JFM sunspots leading ENSO OND by 1 yr: r = +0.16</strong>. NAO's only non-trivial pull is contemporaneous autumn (OND→OND, +0.16) — i.e. ENSO driving NAO, not the reverse, so weak as a <em>predictor</em>.</p>
+
+  <h3>3c. The dominant signal is ENSO's own persistence — and the spring barrier</h3>
+  <table>
+    <thead><tr><th>ONI season (Y) → ONI OND (Y)</th><th>r</th></tr></thead>
+    <tbody>
+      <tr><td>JFM → OND</td><td><strong class="neg">−0.02</strong> ← spring predictability barrier</td></tr>
+      <tr><td>AMJ → OND</td><td><strong class="pos">+0.62</strong></td></tr>
+      <tr><td>JAS → OND</td><td><strong class="pos">+0.96</strong></td></tr>
+    </tbody>
+  </table>
+  <div class="takeaway"><strong>Implication for the model — the headline to walk her through:</strong> the exogenous predictors (NAO, sunspots) are weak (|r| ≲ 0.16); ENSO's <em>own</em> state from <strong>late spring onward</strong> dwarfs them (AMJ +0.62, JAS +0.96). A useful 2026 model should therefore (a) be anchored on <strong>AMJ/JAS persistence</strong>, (b) add <strong>sunspots at a 1-yr lead</strong> as the strongest exogenous term, and (c) treat NAO as a candidate, not a pillar. And nothing skillful is recoverable from the <strong>winter (JFM) side of the spring barrier</strong> — manage that expectation up front.</div>
+
+  <h2>4. Current-state snapshot <span style="font-weight:400;color:var(--muted);font-size:.85rem">(context for any forecast talk)</span></h2>
+  <ul>
+    <li><strong>ENSO:</strong> weak La Niña has relaxed — ONI −0.4 (DJF 2026) → −0.1 (JFM) → +0.1 (FMA), i.e. <strong>trending toward neutral</strong>.</li>
+    <li><strong>NAO:</strong> strongly positive spring — Mar 2026 <strong>+2.42</strong>, Apr <strong>+1.37</strong> (after a negative Nov–Jan).</li>
+    <li><strong>Sunspots:</strong> <strong>past Solar Cycle 25 max</strong> — 104.8 (2024) ticking down to 97.9 (2025). The declining limb is where the lagged-sunspot signal (§3) would be in play for 2026–27 ENSO.</li>
+  </ul>
+
+  <h2>5. Questions to bring</h2>
+  <ol>
+    <li>ENSO credit confirmed as NOAA CPC ONI (URL in §2) — please add it; are <em>Weather</em> and <em>USDA Crops</em> datasets still coming (blank credit rows)?</li>
+    <li>Will sunspots &amp; ENSO be refreshed to current, or is 2025 the frozen cutoff?</li>
+    <li>What's her target/output variable — predict ONI itself, or a downstream crop/weather outcome?</li>
+    <li>Given the diagnostics (§3): agreed to anchor on <strong>AMJ/JAS ENSO persistence + 1-yr sunspot lead</strong>, with NAO as a candidate — not an annual-mean NAO+sunspot fit?</li>
+    <li>Do we accept the <strong>spring barrier</strong> (no winter→autumn skill) as a hard constraint on what 2026 forecasts can claim?</li>
+  </ol>
+
+  <p class="meta-foot">Caveat: n=76 annual rows — the +0.62/+0.96 persistence figures are rock-solid; the ±0.16 predictor signals are real but modest, so frame them as "worth engineering," not "proven." · Working doc, to be removed after the meeting.</p>
+</main>
+</body>
+</html>
