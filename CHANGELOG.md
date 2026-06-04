@@ -10,7 +10,20 @@ diagnostics, and the forecast-validation harness.
 
 ## [Unreleased]
 
+## [0.1.2] — 2026-06-04
+
 ### Added
+- **`src/seasonal_diagnostics.py`** — seasonal & lagged correlation diagnostics for the
+  NAO / sunspot → ENSO question, run on a cleaned provider workbook (ENSO / NAO /
+  Sunspots sheets). Reports three things that decide the model's predictor structure:
+  the **seasonal cross-correlation** of each predictor quarter against ENSO's OND peak,
+  the **sunspot lead** (JFM sunspots vs ENSO OND, 0–3 yr), and **ENSO self-persistence**
+  across the boreal-spring barrier. Writes the table to `results/seasonal_lag_correlation.csv`
+  (generated output; `results/` is gitignored, regenerate with `--xlsx`).
+  Headline over 1950–2025 (n=76): exogenous predictors are weak (sunspot JFM→OND +0.14,
+  best at a 1-yr lead +0.16; NAO maxes at +0.16 contemporaneous autumn), while ENSO's own
+  state dominates from late spring on (AMJ→OND **+0.62**, JAS→OND **+0.96**) and the
+  winter→autumn link collapses at the **spring predictability barrier** (JFM→OND −0.02).
 - **Dependabot** (`.github/dependabot.yml`) for the `github-actions` ecosystem — weekly,
   grouped into one PR. It bumps SHA-pinned actions and keeps the commit SHA and the
   trailing version comment in sync, so the pins stay current without manual SHA lookups.
@@ -134,5 +147,6 @@ observed Niño 3.4 SST anomalies.
   model run) are observable, and only the *rise* — the OND peak and decline need the
   Jan–Apr 2027 re-runs.
 
+[0.1.2]: https://github.com/wbp318/el-nino-26/releases/tag/v0.1.2
 [0.1.1]: https://github.com/wbp318/el-nino-26/releases/tag/v0.1.1
 [0.1.0]: https://github.com/wbp318/el-nino-26/releases/tag/v0.1.0
