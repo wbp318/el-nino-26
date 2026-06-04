@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Project alignment — what are we building? (2026-06-04)</title>
+<style>
+  :root {
+    --ink: #1a1f26; --muted: #5b6672; --line: #e2e6ea; --bg: #ffffff;
+    --accent: #0b5cad; --warm: #b5341f; --cool: #0b6e4f; --chip: #f1f5f9;
+    --in: #0b6e4f; --out: #b5341f;
+  }
+  * { box-sizing: border-box; }
+  body { font: 16px/1.55 -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: var(--ink); background: #f6f7f9; margin: 0; padding: 2rem 1rem; }
+  main { max-width: 860px; margin: 0 auto; background: var(--bg);
+    padding: 2.5rem 3rem 3rem; border: 1px solid var(--line); border-radius: 10px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.05); }
+  h1 { font-size: 1.7rem; margin: 0 0 .25rem; line-height: 1.2; }
+  .sub { color: var(--muted); margin: 0 0 1.5rem; }
+  hr { border: none; border-top: 2px solid var(--line); margin: 1.5rem 0; }
+  h2 { font-size: 1.2rem; margin: 2rem 0 .75rem; padding-bottom: .3rem;
+    border-bottom: 1px solid var(--line); color: var(--accent); }
+  p { margin: .6rem 0; }
+  code { font-family: "SF Mono", Consolas, monospace; font-size: .88em;
+    background: var(--chip); padding: .08em .35em; border-radius: 4px; }
+  .lead { font-size: 1.05rem; }
+  .columns { display: flex; gap: 1rem; margin: 1rem 0; flex-wrap: wrap; }
+  .col { flex: 1 1 240px; border: 1px solid var(--line); border-radius: 8px; padding: 1rem 1.2rem; }
+  .col h3 { margin: 0 0 .5rem; font-size: 1rem; }
+  .col.inputs { background: #eef7f2; border-color: #bfe0d0; }
+  .col.inputs h3 { color: var(--in); }
+  .col.outputs { background: #fdeeea; border-color: #f1c4b8; }
+  .col.outputs h3 { color: var(--out); }
+  .col ul { margin: .25rem 0 0; padding-left: 1.2rem; }
+  .col li { margin: .3rem 0; }
+  .tag { display: inline-block; font-size: .72rem; font-weight: 600; letter-spacing: .03em;
+    text-transform: uppercase; padding: .12em .5em; border-radius: 4px; margin-left: .4rem; }
+  .tag.have { background: #d6efe2; color: var(--in); }
+  .tag.missing { background: #f8d4ca; color: var(--out); }
+  .scenario { border: 1px solid var(--line); border-radius: 8px; padding: 1rem 1.2rem; margin: 1rem 0; }
+  .scenario h3 { margin: 0 0 .4rem; font-size: 1.05rem; }
+  .scenario.a { border-left: 4px solid var(--accent); }
+  .scenario.b { border-left: 4px solid var(--out); }
+  .ask { background: #eef5fc; border-left: 4px solid var(--accent); padding: 1rem 1.2rem;
+    border-radius: 0 6px 6px 0; margin: 1.5rem 0; }
+  .ask .q { font-size: 1.15rem; font-weight: 600; color: var(--accent); margin: .3rem 0 .6rem; }
+  .meta-foot { color: var(--muted); font-size: .85rem; margin-top: 2.5rem;
+    border-top: 1px solid var(--line); padding-top: 1rem; }
+  @media print { body { background: #fff; padding: 0; } main { border: none; box-shadow: none; max-width: 100%; } }
+</style>
+</head>
+<body>
+<main>
+  <h1>Project alignment — what are we building?</h1>
+  <p class="sub">Prep note for the 2026-06-04 meeting · el-niño-26 · before we go deep, let's agree on the destination</p>
+  <hr>
+
+  <p class="lead">I want to make sure I point the analysis the right way. Reading the data you sent, I can see <em>what</em> you assembled, but I want to confirm <em>where it's headed</em>. The sheets sort cleanly into two buckets:</p>
+
+  <div class="columns">
+    <div class="col inputs">
+      <h3>Climate drivers (likely inputs)</h3>
+      <ul>
+        <li>ENSO / ONI <span class="tag have">have</span></li>
+        <li>NAO <span class="tag have">have</span></li>
+        <li>Sunspots <span class="tag have">have</span></li>
+      </ul>
+    </div>
+    <div class="col outputs">
+      <h3>Outcomes (likely targets)</h3>
+      <ul>
+        <li>Weather <span class="tag missing">blank</span></li>
+        <li>USDA Crops <span class="tag missing">blank</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <p>The three climate indices are complete and clean. The two outcome sheets — <strong>Weather</strong> and <strong>USDA Crops</strong> — are still empty in the <code>credits</code> tab. That pattern makes me think the climate indices are the <strong>predictors</strong>, and a crop/weather outcome is the thing we're ultimately trying to forecast. But I don't want to assume — it would change how I set everything up.</p>
+
+  <h2>The two ways this could go</h2>
+
+  <div class="scenario a">
+    <h3>Scenario A — the target is ENSO itself</h3>
+    <p>We're building a teleconnection model: do NAO + sunspots help forecast El Niño / La Niña? If so, my diagnostics from this week apply directly, and we refine from there.</p>
+  </div>
+
+  <div class="scenario b">
+    <h3>Scenario B — the target is crops / yield</h3>
+    <p>ENSO, NAO and sunspots are <em>features</em>, "Weather" is the physical middleman, and <strong>USDA crop data is the real output</strong>. If that's it, the two blank sheets are actually the payload — and the correlation work re-points from "predict ENSO" to "drivers → yield."</p>
+  </div>
+
+  <div class="ask">
+    <p style="margin:0;color:var(--muted);">So the one thing that unlocks everything else:</p>
+    <p class="q">When this model is finished, what's the single number it produces — an ENSO forecast, or a crop / yield outcome?</p>
+    <p style="margin:.2rem 0 0;">Whichever it is, I can re-frame the rest of the analysis around it immediately. Everything downstream (which predictors matter, what data we still need, how we score it) follows from that one answer.</p>
+  </div>
+
+  <h2>If it's crops (Scenario B), the follow-ups</h2>
+  <ul>
+    <li>Which crops, and what measure — yield, planted acreage, condition ratings, harvest timing?</li>
+    <li>What region / resolution — national, state, county?</li>
+    <li>What does the "Weather" sheet hold, and is it an intermediate step or another input?</li>
+    <li>Are the USDA + Weather sheets coming, and on what timeline?</li>
+  </ul>
+
+  <p class="meta-foot">Working doc for the 2026-06-04 meeting — to be removed afterward.</p>
+</main>
+</body>
+</html>
