@@ -10,6 +10,40 @@ diagnostics, and the forecast-validation harness.
 
 ## [Unreleased]
 
+### Added
+- **`src/merge_crop_target.py`** — Scenario-B target scaffolding: merges an annual
+  crop-yield (or any yearly) predictand into `panel_yearly.csv`'s `target` column, from
+  a two-column `year,value` CSV or directly from a provider-workbook sheet (default
+  `USDA Crops`, columns auto-detected, overridable). Validates (duplicate years, no
+  numeric column, unparseable rows) and never touches predictor columns.
+- **`data/targets/`** — committed home for predictand series awaiting merge, with a
+  schema README (including open provider questions) and a header-only
+  `crop_yield_template.csv`.
+- **`tests/test_merge_crop_target.py`** — 7 hermetic tests for column auto-detection,
+  row cleaning, duplicate-year rejection, CSV round-trip, and year-aligned merging
+  (suite now 17 tests).
+
+### Changed
+- **First real verification run (2026-07-29):** with observations through Jun 2026 the
+  harness scores 1 season — AMJ 2026: COLA +1.25 vs obs +0.88 (ERSSTv5), signed error
+  **+0.37 degC warm**; beats climatology, loses to persistence/dynamical mean at lead 0
+  (n=1, descriptive). Context: the **July 20, 2026 IRI/CPC plume** confirms the event —
+  weekly Niño3.4 +2.1 degC mid-July, 100% El Niño probability JAS 2026 → JFM 2027, 23/26
+  models peaking ≥ +2.0 degC in OND 2026.
+- README gains an **Architecture** section with two Mermaid diagrams: the repo's full
+  data-flow (sources → fetch → panels → analysis / verification / model, plus the
+  provider-input path) and the decision space (Scenario A vs B model workflows plus the
+  parallel verification track).
+- README rewritten around the two-scenario target question (A: predict ENSO — argued
+  against by the v0.1.2 diagnostics; B: crop yield — the working assumption), the new
+  merge path, and the first verification result.
+
+### Removed
+- The three temporary root documents from the 2026-06-04 provider meeting
+  (`amelia_meeting_brief_2026-06-04.{md,html}`, `project_alignment_2026-06-04.html`) —
+  they were explicitly marked "to be removed afterward"; their substance now lives in
+  the CHANGELOG, README, and `data/targets/README.md`.
+
 ## [0.1.2] — 2026-06-04
 
 ### Added
