@@ -85,86 +85,111 @@ verification, and the (pluggable) model:
 
 ```mermaid
 flowchart TB
-    subgraph sources["Upstream sources (public, fetched monthly)"]
-        SILSO["WDC-SILSO<br/>sunspots: daily / monthly / yearly"]
-        CPC["NOAA CPC<br/>NAO, ONI, ERSSTv5 Nino3.4"]
-        NCAR["NCAR<br/>Hurrell station NAO"]
-        PSL["NOAA PSL<br/>long Nino3.4 (1870-)"]
+    subgraph legend["LEGEND"]
+        direction LR
+        L1["rectangle = script / process"]
+        L2[("cylinder = data on disk")]
+        L3(["stadium = outcome / deliverable"])
+        L4{"diamond = open decision"}
+        L1 --> L2
+        L2 -.->|"dashed = pending / not yet delivered"| L3
     end
 
-    FETCH["src/fetch_data.py<br/>download 8 files, reject HTML error pages"]
-    RAW[("data/raw/  (gitignored)<br/>MANIFEST.md = provenance")]
-    BUILD["src/build_panel.py<br/>parse + align on month-start index"]
-    PM[("data/processed/panel_monthly.csv<br/>1749- , 6 drivers + clean_1950plus + target")]
-    PY[("data/processed/panel_yearly.csv<br/>1700- , annual means + ssn_yearly + target")]
+    subgraph sources["Upstream sources (public)"]
+        direction LR
+        SILSO["WDC-SILSO<br/>sunspots"]
+        CPC["NOAA CPC<br/>NAO, ONI, ERSSTv5"]
+        NCAR["NCAR<br/>station NAO"]
+        PSL["NOAA PSL<br/>long Nino3.4"]
+    end
+
+    FETCH["src/fetch_data.py"]
+    RAW[("data/raw/")]
+    BUILD["src/build_panel.py"]
+    PM[("panel_monthly.csv<br/>1749-")]
+    PY[("panel_yearly.csv<br/>1700-")]
 
     subgraph provider["Provider inputs (Dr. Fox)"]
-        XLSX["DataforElnino.xlsx<br/>ENSO / NAO / Sunspots (+ pending Weather, USDA Crops)"]
-        TGT[("data/targets/*.csv<br/>committed predictand series")]
+        XLSX[("DataforElnino.xlsx")]
+        TGT[("data/targets/*.csv")]
     end
 
-    subgraph analysis["Analysis"]
-        CORR["R/correlate.R<br/>corr matrix + lead/lag CCF"]
-        DIAG["src/seasonal_diagnostics.py<br/>seasonal + lagged corr vs ENSO OND peak"]
-    end
+    CORR["R/correlate.R"]
+    DIAG["src/seasonal_diagnostics.py"]
+    FCSV[("data/forecasts/<br/>digitized plume lines")]
+    VERIFY["src/verify_forecast.py"]
+    MERGE["src/merge_crop_target.py"]
+    MODEL["R/model.R"]
+    RES[("results/")]
+    OUT(["forecast scorecard"])
+    FIT(["fitted model"])
 
-    subgraph verification["Forecast verification (standalone)"]
-        FCSV[("data/forecasts/<br/>digitized COLA CCSM4 + dyn-mean, May 2026 plume")]
-        VERIFY["src/verify_forecast.py<br/>per-lead error, MAE/RMSE vs persistence + climatology"]
-    end
-
-    MERGE["src/merge_crop_target.py<br/>fill target column by year"]
-    MODEL["R/model.R<br/>target ~ lagged drivers, time-ordered 80/20<br/>(no-op until target set)"]
-    RES[("results/  (gitignored)")]
-
-    SILSO & CPC & NCAR & PSL --> FETCH --> RAW --> BUILD
-    BUILD --> PM & PY
+    sources --> FETCH --> RAW --> BUILD
+    BUILD --> PM
+    BUILD --> PY
     PM --> CORR --> RES
     XLSX --> DIAG --> RES
-    PM -- "enso_nino34_9120<br/>(fixed 1991-2020 base)" --> VERIFY
-    FCSV --> VERIFY
-    XLSX -. "USDA Crops sheet<br/>(pending)" .-> TGT
+    PM -->|"enso_nino34_9120"| VERIFY
+    FCSV --> VERIFY --> OUT
+    XLSX -.->|"USDA Crops (pending)"| TGT
     TGT --> MERGE --> PY
-    PY --> MODEL
-    PM --> MODEL
-
-    CI["GitHub Actions CI: ruff + 17 hermetic pytest tests<br/>Linux + Windows, py3.10/3.12 (no network)"]
+    PY --> MODEL --> FIT
 ```
+
+Everything above is exercised by CI (ruff + 17 hermetic pytest tests, Linux + Windows,
+py3.10/3.12, no network). `data/raw/` and `results/` are gitignored and regenerable;
+`data/forecasts/` and `data/targets/` are committed.
 
 And the decision space — the two candidate model scenarios and the workflows that
 serve them (what the v0.1.2 diagnostics say about each path):
 
 ```mermaid
 flowchart TB
-    Q{"Alignment question (open):<br/>what single number does the<br/>finished model produce?"}
-
-    Q -- "Scenario A" --> A0["Predict ENSO itself<br/>features: NAO + sunspots"]
-    Q -- "Scenario B (working assumption)" --> B0["Predict USDA crop yield<br/>features: ENSO + NAO + sunspots<br/>weather = mediating layer"]
-
-    subgraph sa["Scenario A - what the diagnostics found"]
-        A0 --> A1["NAO: r = 0<br/>(best +0.16, contemporaneous -<br/>i.e. ENSO drives NAO, not vice versa)"]
-        A0 --> A2["Sunspots: weak<br/>r = +0.16 at 1-yr lead"]
-        A0 --> A3["ENSO persistence dominates:<br/>AMJ to OND +0.62<br/>JAS to OND +0.96"]
-        A3 --> A4["...but spring barrier:<br/>JFM to OND = -0.02"]
-        A1 & A2 & A4 --> A5(["Verdict: model collapses to<br/>persistence + small sunspot term.<br/>Publishable as a null result,<br/>not a useful forecast tool"])
+    subgraph legend["LEGEND"]
+        direction LR
+        L1{"diamond = open decision"}
+        L2["rectangle = step / finding"]
+        L3(["stadium = end state / deliverable"])
+        L1 --> L2
+        L2 -.->|"dashed = relationship, not a step"| L3
     end
 
-    subgraph sb["Scenario B - the buildable path"]
-        B0 --> B1["Blocked on provider:<br/>Weather + USDA Crops data<br/>(credit rows reserved, sheets empty)"]
-        B1 --> B2["merge_crop_target.py<br/>fill panel_yearly target"]
-        B2 --> B3["R/model.R: yield ~ lagged drivers<br/>window: clean_1950plus"]
-        B3 --> B4["Benchmark vs persistence +<br/>climatology; handle seasonality<br/>+ autocorrelation first"]
-        B4 --> B5(["Deliverable: pre-season<br/>yield outlook keyed to<br/>ENSO state"])
+    Q{"Open question:<br/>what number does the<br/>finished model produce?"}
+
+    Q -->|"Scenario A"| A0["Predict ENSO itself<br/>from NAO + sunspots"]
+    Q -->|"Scenario B<br/>(working assumption)"| B0["Predict USDA crop yield<br/>from ENSO + NAO + sunspots"]
+
+    subgraph sa["Scenario A — diagnostics verdict"]
+        A1["NAO adds ~0"]
+        A2["sunspots weak:<br/>+0.16 at 1-yr lead"]
+        A3["persistence dominates:<br/>JAS-to-OND r = +0.96"]
+        A4["spring barrier:<br/>JFM-to-OND r = -0.02"]
+        A5(["collapses to persistence:<br/>a null result, not a tool"])
+        A1 --> A5
+        A2 --> A5
+        A3 --> A4 --> A5
     end
 
-    subgraph sv["Parallel workflow - verification (running now)"]
-        V1["2026 El Nino confirmed:<br/>weekly Nino3.4 +2.1 degC (Jul 2026),<br/>100% probability thru JFM 2027"]
-        V1 --> V2["Monthly: rerun verify_forecast.py<br/>as MJJ / JJA / JAS become scoreable"]
-        V2 --> V3["Jan-Apr 2027: score the<br/>OND peak + decline"]
-        V3 --> V4(["Output: per-lead error profile<br/>of COLA CCSM4 vs baselines<br/>(first season: +0.37 degC warm)"])
+    subgraph sb["Scenario B — buildable path"]
+        B1["waiting on provider:<br/>Weather + USDA Crops data"]
+        B2["merge_crop_target.py"]
+        B3["R/model.R<br/>yield ~ lagged drivers"]
+        B4["benchmark vs persistence<br/>+ climatology"]
+        B5(["pre-season yield outlook<br/>keyed to ENSO state"])
+        B1 --> B2 --> B3 --> B4 --> B5
     end
 
-    B5 -. "a strong 2026 event = ideal<br/>out-of-sample test year" .- V4
+    subgraph sv["Verification track — running now"]
+        V1["2026 El Nino confirmed<br/>(+2.1 degC, Jul 2026)"]
+        V2["monthly reruns:<br/>MJJ / JJA / JAS"]
+        V3["Jan–Apr 2027:<br/>score OND peak + decline"]
+        V4(["per-lead error profile<br/>(AMJ: +0.37 degC warm)"])
+        V1 --> V2 --> V3 --> V4
+    end
+
+    A0 --> sa
+    B0 --> sb
+    sb -.-|"strong 2026 event =<br/>ideal out-of-sample test"| sv
 ```
 
 ## Why this exists
